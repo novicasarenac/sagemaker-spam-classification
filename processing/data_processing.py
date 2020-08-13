@@ -1,13 +1,13 @@
-import os
 import argparse
+import os
 import pickle
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.feature_extraction.text import CountVectorizer
-from typing import Text, Tuple, Dict, List
+from typing import List, Text
 
+import numpy as np
+import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 FILE_NAME: Text = "SMSSpamCollection"
 NUM_WORDS: int = 3000
@@ -29,7 +29,9 @@ class DataProcessor:
         vectorizer.fit(data.sms)
         X = self._encode(data.sms, vectorizer)
         y = data.label.values
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2
+        )
         self._save_data(vectorizer, X_train, X_test, y_train, y_test)
 
     def _encode(self, texts: List, vectorizer: CountVectorizer) -> np.array:
@@ -40,7 +42,11 @@ class DataProcessor:
             sms = sms.lower()
             tokens = tokenizer(sms)
             encoded_sms = np.array(
-                [vocabulary[token] for token in tokens if token in vocabulary.keys()]
+                [
+                    vocabulary[token]
+                    for token in tokens
+                    if token in vocabulary.keys()
+                ]
             )
             if MAX_SEQ_LEN > len(encoded_sms):
                 padding_size = MAX_SEQ_LEN - len(encoded_sms)
@@ -48,7 +54,10 @@ class DataProcessor:
                 padding_size = 0
                 encoded_sms = encoded_sms[:MAX_SEQ_LEN]
             encoded_sms = np.pad(
-                encoded_sms, (0, padding_size), mode="constant", constant_values=0
+                encoded_sms,
+                (0, padding_size),
+                mode="constant",
+                constant_values=0,
             )
             encoded.append(encoded_sms)
         return np.vstack(encoded)
@@ -92,7 +101,9 @@ class DataProcessor:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-dp", "--data_path", help="Path to the raw data.")
-    parser.add_argument("-op", "--output_path", help="Path to the output data.")
+    parser.add_argument(
+        "-op", "--output_path", help="Path to the output data."
+    )
     args = parser.parse_args()
     data_processor = DataProcessor(args.data_path, args.output_path)
     data_processor()

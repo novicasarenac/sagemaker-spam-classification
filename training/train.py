@@ -1,9 +1,9 @@
-import os
 import argparse
-import numpy as np
-import tensorflow as tf
+import os
 from typing import Text, Tuple
 
+import numpy as np
+import tensorflow as tf
 
 NUM_WORDS: int = 3000
 MAX_SEQ_LEN: int = 100
@@ -57,7 +57,9 @@ class Trainer:
         model = tf.keras.models.Sequential(
             [
                 tf.keras.layers.Input(name="inputs", shape=[MAX_SEQ_LEN]),
-                tf.keras.layers.Embedding(NUM_WORDS, 50, input_length=MAX_SEQ_LEN),
+                tf.keras.layers.Embedding(
+                    NUM_WORDS, 50, input_length=MAX_SEQ_LEN
+                ),
                 tf.keras.layers.LSTM(32),
                 tf.keras.layers.Dense(256, activation="relu"),
                 tf.keras.layers.Dropout(0.3),
